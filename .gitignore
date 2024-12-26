@@ -1,0 +1,6 @@
+.DS_Store
+Analyzing/
+*.log
+*.tmp
+*.bak
+*.swp
