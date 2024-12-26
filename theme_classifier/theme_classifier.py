@@ -1,8 +1,10 @@
+import pandas as pd
 from transformers import pipeline
 from nltk import sent_tokenize
 import nltk
 import torch
 from glob import glob
+
 
 nltk.download("punkt")
 
@@ -30,17 +32,28 @@ theme_classifier(
 )
 
 
-#Load Dataset
-files = glob("../data/Subtitles/*.ass")
-files[:5]
 
-
-#Clean datas
-with open(files[0], "r") as file:
-    lines = file.readlines()
-    lines = lines[27:]
-    lines = [",".join(line.split(",")[9:]) for line in lines ]
+def load_subtitles(dataset_path):
+    subtitles_path = glob("../data/Subtitles/*.ass")
     
-lines = [line.replace("\\N", "") for line in lines]   
-
-lines[:2]
+    subtitles = []
+    episode_num = []
+    
+    for path in subtitles_path:
+        
+        with open(path, "r") as file:
+            lines = file.readlines()
+            lines = lines[27:]
+            lines = [",".join(line.split(",")[9:]) for line in lines]
+            lines = [line.replace("\\N", "") for line in lines]
+            
+        script = " ".join(lines)
+        
+        episode = int(path.split("-")[-1].split(".")[0].strip())
+        
+        subtitles.append(script)
+        episode_num.append(episode)
+        
+    df =pd.DataFrame.from_dict({"episode": episode_num, "script": subtitles})
+    
+    return df
