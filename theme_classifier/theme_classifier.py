@@ -8,12 +8,12 @@ from glob import glob
 
 nltk.download("punkt")
 
-
-#Load Model
+# Load the zero-shot classification model from Hugging Face
 model_name="valhalla/distilbart-mnli-12-3"
 device =0 if torch.cuda.is_available() else -1
 
 
+# Function to load the classification model
 def load_model(device):
     theme_classifer = pipeline(
         "zero-shot-classification",
@@ -24,6 +24,8 @@ def load_model(device):
 
 theme_classifier = load_model(device)
 
+
+# Test the classifier with an example sentence
 theme_list = ["friendship", "hope", "sacrifice", "battle", "self development", "betrayal", "love", "dialogue"]
 
 theme_classifier(
@@ -32,9 +34,9 @@ theme_classifier(
 )
 
 
-
+# Function to load and process subtitle files
 def load_subtitles(dataset_path):
-    subtitles_path = glob("../data/Subtitles/*.ass")
+    subtitles_path = glob(dataset_path + "/*.ass")
     
     subtitles = []
     episode_num = []
@@ -57,3 +59,8 @@ def load_subtitles(dataset_path):
     df =pd.DataFrame.from_dict({"episode": episode_num, "script": subtitles})
     
     return df
+
+
+ # Define and load the path to the subtitle dataset
+dataset_path = "../data/Subtitles"
+df = load_subtitles(dataset_path)
