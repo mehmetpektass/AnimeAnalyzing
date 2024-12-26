@@ -28,3 +28,19 @@ theme_classifier(
     "I gave her a left hook then an uppercut then a kick",
     theme_list,
 )
+
+
+#Load Dataset
+files = glob("../data/Subtitles/*.ass")
+files[:5]
+
+
+#Clean datas
+with open(files[0], "r") as file:
+    lines = file.readlines()
+    lines = lines[27:]
+    lines = [",".join(line.split(",")[9:]) for line in lines ]
+    
+lines = [line.replace("\\N", "") for line in lines]   
+
+lines[:2]
