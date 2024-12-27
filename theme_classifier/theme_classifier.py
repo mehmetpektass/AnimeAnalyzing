@@ -64,11 +64,20 @@ df = load_subtitles(dataset_path)
 
 
 #Divide subsentences the first script
-script_per_episode = df.iloc[0]["script"]
+script_per_episode = df.iloc[:2]["script"]
 
 nlp = spacy.load("en_core_web_sm")
 
-doc = nlp(script_per_episode)
 
-script_sentences = [sent.text for sent in doc.sents]
-print(script_sentences)
+
+
+def get_themes(script_per_episode):
+    doc = nlp(script_per_episode)
+    script_sentences = [sent.text for sent in doc.sents]
+    
+    sentence_batch_size = 20
+    script_batches = []
+    
+    for index in range(0,len(script_sentences), sentence_batch_size):
+        sent = " ".join(script_sentences[index:index + sentence_batch_size])
+        script_batches.append(sent)
