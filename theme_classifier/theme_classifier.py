@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from transformers import pipeline
 import torch
 from glob import glob
@@ -58,7 +59,7 @@ df = load_subtitles(dataset_path)
 
 
 #Divide subsentences the first script
-script_per_episode = df.iloc[:2]["script"]
+script_per_episode = " ".join(df.iloc[:3]["script"])
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -89,7 +90,16 @@ def get_themes(script_per_episode):
     themes = {}
     
     for output in theme_output:
-        for label,score in zip(output["labels", output["scores"]]):
+        for label,score in zip(output["labels"], output["scores"]):
             if label not in themes:
                 themes[label] = []
             themes[label].append(score)
+    
+    
+    
+    #Take means of scores
+    themes = {key: np.mean(np.array(value)) for key, value in themes.items()}
+    
+    return themes
+
+get_themes(script_per_episode)
