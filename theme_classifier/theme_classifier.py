@@ -1,6 +1,5 @@
 import pandas as pd
 from transformers import pipeline
-import nltk
 import torch
 from glob import glob
 import spacy
@@ -24,11 +23,6 @@ theme_classifier = load_model(device)
 
 # Test the classifier with an example sentence
 theme_list = ["friendship", "hope", "sacrifice", "battle", "self development", "betrayal", "love", "dialogue"]
-
-theme_classifier(
-    "I gave her a left hook then an uppercut then a kick",
-    theme_list,
-)
 
 
 # Function to load and process subtitle files
@@ -81,3 +75,21 @@ def get_themes(script_per_episode):
     for index in range(0,len(script_sentences), sentence_batch_size):
         sent = " ".join(script_sentences[index:index + sentence_batch_size])
         script_batches.append(sent)
+        
+    
+    #Run Model
+    theme_output = theme_classifier(
+        script_batches,
+        theme_list,
+        multi_label = True
+    )
+    
+    
+    #Wrangle Output
+    themes = {}
+    
+    for output in theme_output:
+        for label,score in zip(output["labels", output["scores"]]):
+            if label not in themes:
+                themes[label] = []
+            themes[label].append(score)
