@@ -1,12 +1,9 @@
 import pandas as pd
 from transformers import pipeline
-from nltk import sent_tokenize
 import nltk
 import torch
 from glob import glob
-
-
-nltk.download("punkt")
+import spacy
 
 # Load the zero-shot classification model from Hugging Face
 model_name="valhalla/distilbart-mnli-12-3"
@@ -64,3 +61,14 @@ def load_subtitles(dataset_path):
  # Define and load the path to the subtitle dataset
 dataset_path = "../data/Subtitles"
 df = load_subtitles(dataset_path)
+
+
+#Divide subsentences the first script
+script_per_episode = df.iloc[0]["script"]
+
+nlp = spacy.load("en_core_web_sm")
+
+doc = nlp(script_per_episode)
+
+script_sentences = [sent.text for sent in doc.sents]
+print(script_sentences)
